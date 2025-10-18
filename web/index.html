@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bounty Hunter - Physical Fitness Challenges</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>Bounty Hunter</h1>
+            <ul class="nav-links">
+                <li><a href="index.html">Map</a></li>
+                <li><a href="submit.html">Create Quest</a></li>
+            </ul>
+            <div class="auth-section"></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 style="text-align: center; color: var(--earth-brown); margin-bottom: 2rem; font-size: 2rem;">
+            🦅 Physical Fitness Bounties
+        </h2>
+        
+        <div id="map"></div>
+
+        <div class="filters">
+            <h2>Filter Quests</h2>
+            <div class="filter-group">
+                <div class="filter-item">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter" onchange="loadBounties()">
+                        <option value="">All Quests</option>
+                        <option value="open">Open</option>
+                        <option value="claimed">Claimed</option>
+                        <option value="under_review">Under Review</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="bountiesContainer" class="bounties-grid">
+            <p style="text-align: center; padding: 2rem; color: var(--earth-brown);">
+                Loading quests from the ancestors...
+            </p>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2>🏹 Warrior Login</h2>
+            <div id="loginError" class="alert alert-error hidden"></div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginUsername">Warrior Name</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Secret Word</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Enter</button>
+                <button type="button" class="btn btn-outline" onclick="closeModal('loginModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <h2>🦅 Join the Hunt</h2>
+            <div id="registerError" class="alert alert-error hidden"></div>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerUsername">Warrior Name</label>
+                    <input type="text" id="registerUsername" required minlength="3">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Sacred Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Secret Word</label>
+                    <input type="password" id="registerPassword" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary">Begin Journey</button>
+                <button type="button" class="btn btn-outline" onclick="closeModal('registerModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN_HERE';
+        
+        let map;
+        let markers = [];
+
+        function initMap() {
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/outdoors-v12',
+                center: [-98.5795, 39.8283],
+                zoom: 4
+            });
+            
+            map.on('load', () => {
+                loadBounties();
+            });
+        }
+
+        function clearMarkers() {
+            markers.forEach(marker => marker.remove());
+            markers = [];
+        }
+
+        function addBountyMarker(bounty) {
+            if (!bounty.location || !bounty.location.lat || !bounty.location.lng) {
+                return;
+            }
+
+            const el = document.createElement('div');
+            el.className = 'bounty-marker';
+            el.style.width = '40px';
+            el.style.height = '40px';
+            el.style.fontSize = '32px';
+            el.style.cursor = 'pointer';
+            el.innerHTML = bounty.status === 'open' ? '🏹' : '✓';
+
+            const popup = new mapboxgl.Popup({ offset: 25 })
+                .setHTML(`
+                    <div style="font-family: Georgia, serif;">
+                        <h3 style="color: var(--earth-brown); margin-bottom: 0.5rem;">${bounty.title}</h3>
+                        <p style="margin-bottom: 0.5rem;">${bounty.description}</p>
+                        <p style="font-weight: bold; color: var(--coral);">💎 $${bounty.reward}</p>
+                        <p style="font-size: 0.9rem; color: var(--earth-brown);">Status: ${bounty.status}</p>
+                    </div>
+                `);
+
+            const marker = new mapboxgl.Marker(el)
+                .setLngLat([bounty.location.lng, bounty.location.lat])
+                .setPopup(popup)
+                .addTo(map);
+
+            markers.push(marker);
+        }
+
+        async function loadBounties() {
+            const container = document.getElementById('bountiesContainer');
+            const status = document.getElementById('statusFilter').value;
+
+            try {
+                container.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--earth-brown);">Loading quests...</p>';
+                const bounties = await api.getBounties(status || null);
+                
+                clearMarkers();
+                
+                if (bounties.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--earth-brown);">No quests found. Create the first one!</p>';
+                    return;
+                }
+
+                bounties.forEach(bounty => {
+                    if (bounty.location) {
+                        addBountyMarker(bounty);
+                    }
+                });
+
+                container.innerHTML = bounties.map(bounty => `
+                    <div class="bounty-card">
+                        <div class="bounty-header">
+                            <h3>${bounty.title}</h3>
+                            <div class="bounty-meta">
+                                <span class="badge badge-${bounty.status}">${bounty.status}</span>
+                            </div>
+                        </div>
+                        <div class="bounty-reward">$${bounty.reward}</div>
+                        <p class="bounty-description">${bounty.description}</p>
+                        ${bounty.location ? `<p class="bounty-location">${bounty.location.name || 'Location set'}</p>` : ''}
+                        <div class="bounty-footer">
+                            <small>by ${bounty.creator_username}</small>
+                            ${bounty.status === 'open' && api.isAuthenticated() ? 
+                                `<button class="btn btn-secondary" onclick="claimBounty(${bounty.id})">Accept Quest</button>` : 
+                                ''}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                container.innerHTML = `<p class="alert alert-error">Error loading quests: ${error.message}</p>`;
+            }
+        }
+
+        async function claimBounty(bountyId) {
+            if (!api.isAuthenticated()) {
+                showAlert('Please login to accept quests', 'error');
+                showLoginModal();
+                return;
+            }
+
+            try {
+                await api.claimBounty(bountyId);
+                showAlert('Quest accepted! May the spirits guide you. 🦅', 'success');
+                loadBounties();
+            } catch (error) {
+                showAlert(`Failed to claim: ${error.message}`, 'error');
+            }
+        }
+
+        initMap();
+    </script>
+</body>
+</html>
