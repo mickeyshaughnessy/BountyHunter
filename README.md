@@ -17,6 +17,7 @@ A simple platform for tracking physical fitness goals and rewards.
 - **Clients**: 
   - Web (Single-page application)
   - Android (Native Kotlin app)
+  - iOS (Native SwiftUI app)
 
 ## 🛠️ Setup
 
@@ -138,3 +139,31 @@ A native Android application built with Kotlin and Material Design 3.
 - Min SDK 24, Target SDK 34
 
 See [android/README.md](android/README.md) for detailed documentation.
+
+## 🍎 iOS Client
+
+A native iOS application built with SwiftUI and modern Swift concurrency.
+
+### Features
+
+- **SwiftUI**: Declarative UI with modern Swift features
+- **Full Feature Set**: Complete parity with web and Android
+- **UserDefaults**: Persistent authentication
+- **Async/Await**: Modern networking with URLSession
+- **Tab Navigation**: Clean 4-tab dashboard interface
+- **Pull to Refresh**: Gesture-based data refresh
+
+### Setup
+
+1. Open `ios/BountyHunter.xcodeproj` in Xcode
+2. Ensure backend server is running
+3. Build and run on simulator or device
+
+### Tech Stack
+
+- Swift 5.9+, SwiftUI
+- URLSession with async/await for networking
+- ObservableObject for state management
+- Min iOS 16.0, Target iOS 17.0
+
+See [ios/README.md](ios/README.md) for detailed documentation.
