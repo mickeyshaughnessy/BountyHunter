@@ -31,6 +31,14 @@ def handle_register():
     email = data.get('email')
     password = data.get('password')
     
+    # New fields
+    full_name = data.get('full_name')
+    location = data.get('location')
+    age = data.get('age')
+    weight = data.get('weight')
+    activity_types = data.get('activity_types', []) # e.g., ["group", "gym"]
+    payment_info = data.get('payment_info')
+    
     if not all([username, email, password]):
         return jsonify({'error': 'Missing required fields'}), 400
     
@@ -44,6 +52,12 @@ def handle_register():
         'username': username,
         'email': email,
         'password_hash': hash_password(password),
+        'full_name': full_name,
+        'location': location,
+        'age': age,
+        'weight': weight,
+        'activity_types': activity_types,
+        'payment_info': payment_info,
         'created_at': datetime.utcnow().isoformat()
     }
     
@@ -53,8 +67,7 @@ def handle_register():
     return jsonify({
         'id': user['id'],
         'username': user['username'],
-        'email': user['email'],
-        'created_at': user['created_at']
+        'email': user['email']
     }), 201
 
 def handle_login():
@@ -80,162 +93,84 @@ def handle_login():
         'email': user['email']
     }}), 200
 
-def handle_create_bounty():
+def handle_get_suggestions():
+    user = get_current_user()
+    if not user:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    # Mock suggestions based on activity types
+    suggestions = [
+        {'id': 1, 'title': 'Morning Run', 'type': 'individual', 'duration': '30 mins'},
+        {'id': 2, 'title': 'Gym Session', 'type': 'gym', 'duration': '60 mins'},
+        {'id': 3, 'title': 'Yoga Class', 'type': 'group', 'duration': '45 mins'},
+    ]
+    
+    user_types = user.get('activity_types', [])
+    if user_types:
+        suggestions = [s for s in suggestions if s['type'] in user_types]
+        
+    return jsonify(suggestions), 200
+
+def handle_log_workout():
     user = get_current_user()
     if not user:
         return jsonify({'error': 'Unauthorized'}), 401
     
     data = request.json
-    title = data.get('title')
-    description = data.get('description')
-    reward = data.get('reward')
-    location = data.get('location')
+    workouts = storage.get_workouts()
     
-    if not all([title, description, reward]):
-        return jsonify({'error': 'Missing required fields'}), 400
+    workout = {
+        'id': get_next_id(workouts),
+        'user_id': user['id'],
+        'title': data.get('title'),
+        'type': data.get('type'),
+        'duration': data.get('duration'),
+        'data': data.get('data'), # Arbitrary workout data
+        'timestamp': datetime.utcnow().isoformat()
+    }
     
-    bounties = storage.get_bounties()
+    workouts.append(workout)
+    storage.save_workouts(workouts)
     
-    bounty = {
-        'id': get_next_id(bounties),
-        'creator_id': user['id'],
-        'creator_username': user['username'],
-        'title': title,
-        'description': description,
-        'reward': reward,
-        'location': location,
-        'status': 'open',
+    return jsonify(workout), 201
+
+def handle_get_history():
+    user = get_current_user()
+    if not user:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    workouts = storage.get_workouts()
+    user_workouts = [w for w in workouts if w['user_id'] == user['id']]
+    
+    return jsonify(user_workouts), 200
+
+def handle_create_recurring():
+    user = get_current_user()
+    if not user:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    data = request.json
+    recurring = storage.get_recurring_workouts()
+    
+    item = {
+        'id': get_next_id(recurring),
+        'user_id': user['id'],
+        'title': data.get('title'),
+        'schedule': data.get('schedule'), # e.g., "daily", "weekly"
         'created_at': datetime.utcnow().isoformat()
     }
     
-    bounties.append(bounty)
-    storage.save_bounties(bounties)
+    recurring.append(item)
+    storage.save_recurring_workouts(recurring)
     
-    return jsonify(bounty), 201
+    return jsonify(item), 201
 
-def handle_list_bounties():
-    status_filter = request.args.get('status')
-    bounties = storage.get_bounties()
-    
-    if status_filter:
-        bounties = [b for b in bounties if b['status'] == status_filter]
-    
-    return jsonify(bounties), 200
-
-def handle_get_bounty(bounty_id):
-    bounties = storage.get_bounties()
-    bounty = next((b for b in bounties if b['id'] == bounty_id), None)
-    
-    if not bounty:
-        return jsonify({'error': 'Bounty not found'}), 404
-    
-    return jsonify(bounty), 200
-
-def handle_claim_bounty(bounty_id):
+def handle_get_recurring():
     user = get_current_user()
     if not user:
         return jsonify({'error': 'Unauthorized'}), 401
     
-    bounties = storage.get_bounties()
-    bounty = next((b for b in bounties if b['id'] == bounty_id), None)
+    recurring = storage.get_recurring_workouts()
+    user_recurring = [r for r in recurring if r['user_id'] == user['id']]
     
-    if not bounty:
-        return jsonify({'error': 'Bounty not found'}), 404
-    
-    if bounty['status'] != 'open':
-        return jsonify({'error': 'Bounty not available'}), 400
-    
-    claims = storage.get_claims()
-    
-    claim = {
-        'id': get_next_id(claims),
-        'bounty_id': bounty_id,
-        'hunter_id': user['id'],
-        'hunter_username': user['username'],
-        'status': 'active',
-        'claimed_at': datetime.utcnow().isoformat()
-    }
-    
-    claims.append(claim)
-    storage.save_claims(claims)
-    
-    bounty['status'] = 'claimed'
-    storage.save_bounties(bounties)
-    
-    return jsonify(claim), 201
-
-def handle_submit_proof(claim_id):
-    user = get_current_user()
-    if not user:
-        return jsonify({'error': 'Unauthorized'}), 401
-    
-    claims = storage.get_claims()
-    claim = next((c for c in claims if c['id'] == claim_id), None)
-    
-    if not claim:
-        return jsonify({'error': 'Claim not found'}), 404
-    
-    if claim['hunter_id'] != user['id']:
-        return jsonify({'error': 'Not your claim'}), 403
-    
-    data = request.json
-    proof_description = data.get('proof_description')
-    proof_url = data.get('proof_url')
-    
-    claim['proof_description'] = proof_description
-    claim['proof_url'] = proof_url
-    claim['status'] = 'submitted'
-    claim['submitted_at'] = datetime.utcnow().isoformat()
-    
-    storage.save_claims(claims)
-    
-    bounties = storage.get_bounties()
-    bounty = next((b for b in bounties if b['id'] == claim['bounty_id']), None)
-    if bounty:
-        bounty['status'] = 'under_review'
-        storage.save_bounties(bounties)
-    
-    return jsonify(claim), 200
-
-def handle_review_claim(claim_id):
-    user = get_current_user()
-    if not user:
-        return jsonify({'error': 'Unauthorized'}), 401
-    
-    claims = storage.get_claims()
-    claim = next((c for c in claims if c['id'] == claim_id), None)
-    
-    if not claim:
-        return jsonify({'error': 'Claim not found'}), 404
-    
-    bounties = storage.get_bounties()
-    bounty = next((b for b in bounties if b['id'] == claim['bounty_id']), None)
-    
-    if not bounty or bounty['creator_id'] != user['id']:
-        return jsonify({'error': 'Only bounty creator can review'}), 403
-    
-    data = request.json
-    approved = data.get('approved', False)
-    
-    if approved:
-        claim['status'] = 'approved'
-        bounty['status'] = 'completed'
-        claim['completed_at'] = datetime.utcnow().isoformat()
-    else:
-        claim['status'] = 'rejected'
-        bounty['status'] = 'open'
-    
-    storage.save_claims(claims)
-    storage.save_bounties(bounties)
-    
-    return jsonify({'message': 'Review submitted', 'approved': approved}), 200
-
-def handle_my_claims():
-    user = get_current_user()
-    if not user:
-        return jsonify({'error': 'Unauthorized'}), 401
-    
-    claims = storage.get_claims()
-    my_claims = [c for c in claims if c['hunter_id'] == user['id']]
-    
-    return jsonify(my_claims), 200
+    return jsonify(user_recurring), 200

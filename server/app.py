@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 import handlers
@@ -10,7 +10,7 @@ CORS(app)
 
 @app.route('/')
 def index():
-    return jsonify({'message': 'Bounty Hunter API', 'version': '2.0'})
+    return jsonify({'message': 'Bounty Hunter API', 'version': '3.0'})
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -20,32 +20,21 @@ def register():
 def login():
     return handlers.handle_login()
 
-@app.route('/api/bounties', methods=['GET', 'POST'])
-def bounties():
+@app.route('/api/suggestions', methods=['GET'])
+def suggestions():
+    return handlers.handle_get_suggestions()
+
+@app.route('/api/workouts', methods=['GET', 'POST'])
+def workouts():
     if request.method == 'POST':
-        return handlers.handle_create_bounty()
-    return handlers.handle_list_bounties()
+        return handlers.handle_log_workout()
+    return handlers.handle_get_history()
 
-@app.route('/api/bounties/<int:bounty_id>', methods=['GET'])
-def get_bounty(bounty_id):
-    return handlers.handle_get_bounty(bounty_id)
-
-@app.route('/api/bounties/<int:bounty_id>/claim', methods=['POST'])
-def claim_bounty(bounty_id):
-    return handlers.handle_claim_bounty(bounty_id)
-
-@app.route('/api/claims/<int:claim_id>/submit', methods=['POST'])
-def submit_proof(claim_id):
-    return handlers.handle_submit_proof(claim_id)
-
-@app.route('/api/claims/<int:claim_id>/review', methods=['POST'])
-def review_claim(claim_id):
-    return handlers.handle_review_claim(claim_id)
-
-@app.route('/api/claims/my', methods=['GET'])
-def my_claims():
-    return handlers.handle_my_claims()
+@app.route('/api/recurring', methods=['GET', 'POST'])
+def recurring():
+    if request.method == 'POST':
+        return handlers.handle_create_recurring()
+    return handlers.handle_get_recurring()
 
 if __name__ == '__main__':
-    from flask import request
     app.run(host='0.0.0.0', port=5000, debug=True)

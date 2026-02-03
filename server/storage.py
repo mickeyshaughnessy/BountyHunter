@@ -55,31 +55,16 @@ class S3Storage:
     def save_users(self, users: List[Dict]) -> bool:
         return self._write_collection('users', users)
     
-    def get_bounties(self) -> List[Dict]:
-        return self._read_collection('bounties')
+    def get_workouts(self) -> List[Dict]:
+        return self._read_collection('workouts')
     
-    def save_bounties(self, bounties: List[Dict]) -> bool:
-        return self._write_collection('bounties', bounties)
+    def save_workouts(self, workouts: List[Dict]) -> bool:
+        return self._write_collection('workouts', workouts)
     
-    def get_claims(self) -> List[Dict]:
-        return self._read_collection('claims')
+    def get_recurring_workouts(self) -> List[Dict]:
+        return self._read_collection('recurring_workouts')
     
-    def save_claims(self, claims: List[Dict]) -> bool:
-        return self._write_collection('claims', claims)
-    
-    def upload_proof(self, user_id: int, bounty_id: int, file_data: bytes, filename: str) -> Optional[str]:
-        try:
-            key = f"proofs/{user_id}/{bounty_id}/{filename}"
-            self._get_client().put_object(
-                Bucket=self.bucket,
-                Key=key,
-                Body=file_data,
-                ContentType='image/jpeg'
-            )
-            url = f"https://{self.bucket}.s3.amazonaws.com/{key}"
-            return url
-        except Exception as e:
-            print(f"Error uploading proof: {e}")
-            return None
+    def save_recurring_workouts(self, recurring: List[Dict]) -> bool:
+        return self._write_collection('recurring_workouts', recurring)
 
 storage = S3Storage()
