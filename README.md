@@ -29,6 +29,14 @@ A simple platform for tracking physical fitness goals and rewards.
    python app.py
    ```
 
+3. Open the web client:
+   ```bash
+   cd web
+   python -m http.server 8080
+   ```
+   
+   Then visit `http://localhost:8080` in your browser.
+
 The API will be available at `http://localhost:5000`
 
 ## 📡 API Endpoints
@@ -82,3 +90,18 @@ The API will be available at `http://localhost:5000`
 - **GET** `/api/recurring` - View recurring workouts (requires auth)
 
 **Authentication**: Include `Authorization: Bearer <token>` header for protected endpoints.
+
+## 💻 Web Client Features
+
+The single-page web application includes:
+
+- **Landing Page**: Clean hero section with call-to-action
+- **Registration**: Complete signup with personal info and fitness preferences
+- **Login**: Secure authentication with token management
+- **Dashboard Tabs**:
+  - **Suggestions**: Personalized workout recommendations based on your preferences
+  - **Log Workout**: Manual workout tracking with notes
+  - **History**: Complete workout history with visual cards
+  - **Recurring**: Create and manage recurring workout schedules
+- **Professional UI**: Modern design with smooth transitions and responsive layout
+- **Local Storage**: Persistent authentication across sessions

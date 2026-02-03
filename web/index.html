@@ -3,214 +3,920 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bounty Hunter - Physical Fitness Challenges</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
-    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <title>Bounty Hunter - Fitness Tracking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --bg-light: #F9FAFB;
+            --bg-white: #FFFFFF;
+            --text-dark: #111827;
+            --text-gray: #6B7280;
+            --border: #E5E7EB;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .logo span {
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            color: var(--text-gray);
+        }
+
+        .btn {
+            padding: 0.5rem 1.25rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        main {
+            padding: 2rem 0;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--bg-white);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .suggestion-card, .workout-card, .recurring-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .suggestion-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .suggestion-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .suggestion-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-individual { background: #DBEAFE; color: #1E40AF; }
+        .badge-group { background: #D1FAE5; color: #065F46; }
+        .badge-gym { background: #FEE2E2; color: #991B1B; }
+        .badge-sports { background: #FEF3C7; color: #92400E; }
+        .badge-free { background: #E0E7FF; color: #3730A3; }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-gray);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--text-gray);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .workout-card {
+            position: relative;
+        }
+
+        .workout-date {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .workout-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .workout-details {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .recurring-schedule {
+            display: inline-block;
+            background: var(--bg-light);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FCA5A5;
+        }
+
+        .alert-success {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #6EE7B7;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-gray);
+        }
+
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    </style>
 </head>
 <body>
-    <nav>
+    <header>
         <div class="container">
-            <h1>Bounty Hunter</h1>
-            <ul class="nav-links">
-                <li><a href="index.html">Map</a></li>
-                <li><a href="submit.html">Create Quest</a></li>
-            </ul>
-            <div class="auth-section"></div>
+            <div class="header-content">
+                <div class="logo"><span>🦅</span> Bounty Hunter</div>
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <span class="user-name" id="userName"></span>
+                    <button class="btn btn-sm btn-danger" onclick="logout()">Logout</button>
+                </div>
+            </div>
         </div>
-    </nav>
+    </header>
 
-    <div class="container">
-        <h2 style="text-align: center; color: var(--earth-brown); margin-bottom: 2rem; font-size: 2rem;">
-            🦅 Physical Fitness Bounties
-        </h2>
-        
-        <div id="map"></div>
-
-        <div class="filters">
-            <h2>Filter Quests</h2>
-            <div class="filter-group">
-                <div class="filter-item">
-                    <label for="statusFilter">Status</label>
-                    <select id="statusFilter" onchange="loadBounties()">
-                        <option value="">All Quests</option>
-                        <option value="open">Open</option>
-                        <option value="claimed">Claimed</option>
-                        <option value="under_review">Under Review</option>
-                        <option value="completed">Completed</option>
-                    </select>
+    <main class="container">
+        <!-- Landing View -->
+        <div id="landingView" class="view active">
+            <div class="hero">
+                <h1>Track Your Fitness Journey</h1>
+                <p>Get personalized workout suggestions, track your progress, and stay consistent with your fitness goals.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary" onclick="showView('registerView')">Get Started</button>
+                    <button class="btn btn-outline" onclick="showView('loginView')">Sign In</button>
                 </div>
             </div>
         </div>
 
-        <div id="bountiesContainer" class="bounties-grid">
-            <p style="text-align: center; padding: 2rem; color: var(--earth-brown);">
-                Loading quests from the ancestors...
-            </p>
-        </div>
-    </div>
-
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <h2>🏹 Warrior Login</h2>
-            <div id="loginError" class="alert alert-error hidden"></div>
-            <form onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label for="loginUsername">Warrior Name</label>
-                    <input type="text" id="loginUsername" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Secret Word</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Enter</button>
-                <button type="button" class="btn btn-outline" onclick="closeModal('loginModal')">Cancel</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <h2>🦅 Join the Hunt</h2>
-            <div id="registerError" class="alert alert-error hidden"></div>
-            <form onsubmit="handleRegister(event)">
-                <div class="form-group">
-                    <label for="registerUsername">Warrior Name</label>
-                    <input type="text" id="registerUsername" required minlength="3">
-                </div>
-                <div class="form-group">
-                    <label for="registerEmail">Sacred Email</label>
-                    <input type="email" id="registerEmail" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Secret Word</label>
-                    <input type="password" id="registerPassword" required minlength="6">
-                </div>
-                <button type="submit" class="btn btn-primary">Begin Journey</button>
-                <button type="button" class="btn btn-outline" onclick="closeModal('registerModal')">Cancel</button>
-            </form>
-        </div>
-    </div>
-
-    <script src="js/api.js"></script>
-    <script src="js/app.js"></script>
-    <script>
-        mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN_HERE';
-        
-        let map;
-        let markers = [];
-
-        function initMap() {
-            map = new mapboxgl.Map({
-                container: 'map',
-                style: 'mapbox://styles/mapbox/outdoors-v12',
-                center: [-98.5795, 39.8283],
-                zoom: 4
-            });
-            
-            map.on('load', () => {
-                loadBounties();
-            });
-        }
-
-        function clearMarkers() {
-            markers.forEach(marker => marker.remove());
-            markers = [];
-        }
-
-        function addBountyMarker(bounty) {
-            if (!bounty.location || !bounty.location.lat || !bounty.location.lng) {
-                return;
-            }
-
-            const el = document.createElement('div');
-            el.className = 'bounty-marker';
-            el.style.width = '40px';
-            el.style.height = '40px';
-            el.style.fontSize = '32px';
-            el.style.cursor = 'pointer';
-            el.innerHTML = bounty.status === 'open' ? '🏹' : '✓';
-
-            const popup = new mapboxgl.Popup({ offset: 25 })
-                .setHTML(`
-                    <div style="font-family: Georgia, serif;">
-                        <h3 style="color: var(--earth-brown); margin-bottom: 0.5rem;">${bounty.title}</h3>
-                        <p style="margin-bottom: 0.5rem;">${bounty.description}</p>
-                        <p style="font-weight: bold; color: var(--coral);">💎 $${bounty.reward}</p>
-                        <p style="font-size: 0.9rem; color: var(--earth-brown);">Status: ${bounty.status}</p>
+        <!-- Register View -->
+        <div id="registerView" class="view">
+            <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <h2 class="card-title">Create Your Account</h2>
+                <div id="registerError" class="alert alert-error" style="display: none;"></div>
+                <form id="registerForm" onsubmit="register(event)">
+                    <div class="form-group">
+                        <label>Username *</label>
+                        <input type="text" name="username" required>
                     </div>
-                `);
-
-            const marker = new mapboxgl.Marker(el)
-                .setLngLat([bounty.location.lng, bounty.location.lat])
-                .setPopup(popup)
-                .addTo(map);
-
-            markers.push(marker);
-        }
-
-        async function loadBounties() {
-            const container = document.getElementById('bountiesContainer');
-            const status = document.getElementById('statusFilter').value;
-
-            try {
-                container.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--earth-brown);">Loading quests...</p>';
-                const bounties = await api.getBounties(status || null);
-                
-                clearMarkers();
-                
-                if (bounties.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--earth-brown);">No quests found. Create the first one!</p>';
-                    return;
-                }
-
-                bounties.forEach(bounty => {
-                    if (bounty.location) {
-                        addBountyMarker(bounty);
-                    }
-                });
-
-                container.innerHTML = bounties.map(bounty => `
-                    <div class="bounty-card">
-                        <div class="bounty-header">
-                            <h3>${bounty.title}</h3>
-                            <div class="bounty-meta">
-                                <span class="badge badge-${bounty.status}">${bounty.status}</span>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password *</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" name="full_name">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" name="location">
+                        </div>
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" name="age" min="13" max="120">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Weight (lbs)</label>
+                        <input type="number" name="weight" min="50" max="500">
+                    </div>
+                    <div class="form-group">
+                        <label>Activity Preferences</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="activity_types" value="individual" id="act_individual">
+                                <label for="act_individual" style="margin: 0;">Individual</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="activity_types" value="group" id="act_group">
+                                <label for="act_group" style="margin: 0;">Group</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="activity_types" value="gym" id="act_gym">
+                                <label for="act_gym" style="margin: 0;">Gym</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="activity_types" value="sports" id="act_sports">
+                                <label for="act_sports" style="margin: 0;">Sports</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="activity_types" value="free" id="act_free">
+                                <label for="act_free" style="margin: 0;">Free</label>
                             </div>
                         </div>
-                        <div class="bounty-reward">$${bounty.reward}</div>
-                        <p class="bounty-description">${bounty.description}</p>
-                        ${bounty.location ? `<p class="bounty-location">${bounty.location.name || 'Location set'}</p>` : ''}
-                        <div class="bounty-footer">
-                            <small>by ${bounty.creator_username}</small>
-                            ${bounty.status === 'open' && api.isAuthenticated() ? 
-                                `<button class="btn btn-secondary" onclick="claimBounty(${bounty.id})">Accept Quest</button>` : 
-                                ''}
-                        </div>
                     </div>
-                `).join('');
-            } catch (error) {
-                container.innerHTML = `<p class="alert alert-error">Error loading quests: ${error.message}</p>`;
-            }
+                    <div class="form-group">
+                        <label>Payment Info</label>
+                        <input type="text" name="payment_info" placeholder="Card ending in 1234">
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn btn-primary">Create Account</button>
+                        <button type="button" class="btn btn-outline" onclick="showView('loginView')">Already have an account?</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Login View -->
+        <div id="loginView" class="view">
+            <div class="card" style="max-width: 400px; margin: 0 auto;">
+                <h2 class="card-title">Welcome Back</h2>
+                <div id="loginError" class="alert alert-error" style="display: none;"></div>
+                <form id="loginForm" onsubmit="login(event)">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                        <button type="button" class="btn btn-outline" onclick="showView('registerView')">Create Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="dashboardView" class="view">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="switchTab('suggestions')">Suggestions</button>
+                <button class="nav-tab" onclick="switchTab('logWorkout')">Log Workout</button>
+                <button class="nav-tab" onclick="switchTab('history')">History</button>
+                <button class="nav-tab" onclick="switchTab('recurring')">Recurring</button>
+            </div>
+
+            <!-- Suggestions Tab -->
+            <div id="suggestionsTab" class="tab-content active">
+                <div class="card">
+                    <h2 class="card-title">Personalized Workout Suggestions</h2>
+                    <div id="suggestionsLoading" class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading suggestions...</p>
+                    </div>
+                    <div id="suggestionsList" class="grid" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Log Workout Tab -->
+            <div id="logWorkoutTab" class="tab-content" style="display: none;">
+                <div class="card" style="max-width: 600px; margin: 0 auto;">
+                    <h2 class="card-title">Log Your Workout</h2>
+                    <div id="logWorkoutSuccess" class="alert alert-success" style="display: none;"></div>
+                    <form id="logWorkoutForm" onsubmit="logWorkout(event)">
+                        <div class="form-group">
+                            <label>Workout Title *</label>
+                            <input type="text" name="title" required placeholder="Morning Run">
+                        </div>
+                        <div class="form-group">
+                            <label>Type *</label>
+                            <select name="type" required>
+                                <option value="">Select type...</option>
+                                <option value="individual">Individual</option>
+                                <option value="group">Group</option>
+                                <option value="gym">Gym</option>
+                                <option value="sports">Sports</option>
+                                <option value="free">Free</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration *</label>
+                            <input type="text" name="duration" required placeholder="30 mins">
+                        </div>
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea name="notes" rows="4" placeholder="How did it go? Any achievements?"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Log Workout</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="historyTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <h2 class="card-title">Your Workout History</h2>
+                    <div id="historyLoading" class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading history...</p>
+                    </div>
+                    <div id="historyList" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Recurring Tab -->
+            <div id="recurringTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <h2 class="card-title">Recurring Workouts</h2>
+                    <button class="btn btn-secondary btn-sm" onclick="showCreateRecurring()" style="margin-bottom: 1rem;">+ Create Recurring Workout</button>
+                    
+                    <div id="createRecurringForm" style="display: none; margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-light); border-radius: 0.5rem;">
+                        <h3 style="margin-bottom: 1rem;">New Recurring Workout</h3>
+                        <form onsubmit="createRecurring(event)">
+                            <div class="form-group">
+                                <label>Title *</label>
+                                <input type="text" name="title" required placeholder="Daily Morning Yoga">
+                            </div>
+                            <div class="form-group">
+                                <label>Schedule *</label>
+                                <select name="schedule" required>
+                                    <option value="">Select schedule...</option>
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="biweekly">Bi-weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button type="submit" class="btn btn-secondary btn-sm">Create</button>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="hideCreateRecurring()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="recurringLoading" class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading recurring workouts...</p>
+                    </div>
+                    <div id="recurringList" class="grid" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+        // Initialize app
+        if (authToken && currentUser) {
+            showDashboard();
         }
 
-        async function claimBounty(bountyId) {
-            if (!api.isAuthenticated()) {
-                showAlert('Please login to accept quests', 'error');
-                showLoginModal();
-                return;
-            }
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            // Clear error messages
+            document.querySelectorAll('.alert').forEach(alert => alert.style.display = 'none');
+        }
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+
+            // Load data for the tab
+            if (tabName === 'suggestions') loadSuggestions();
+            if (tabName === 'history') loadHistory();
+            if (tabName === 'recurring') loadRecurring();
+        }
+
+        async function register(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            
+            const activityTypes = [];
+            formData.getAll('activity_types').forEach(type => activityTypes.push(type));
+
+            const data = {
+                username: formData.get('username'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                full_name: formData.get('full_name'),
+                location: formData.get('location'),
+                age: formData.get('age') ? parseInt(formData.get('age')) : null,
+                weight: formData.get('weight') ? parseInt(formData.get('weight')) : null,
+                activity_types: activityTypes,
+                payment_info: formData.get('payment_info')
+            };
 
             try {
-                await api.claimBounty(bountyId);
-                showAlert('Quest accepted! May the spirits guide you. 🦅', 'success');
-                loadBounties();
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Auto-login after registration
+                    await loginUser(data.username, data.password);
+                } else {
+                    showError('registerError', result.error || 'Registration failed');
+                }
             } catch (error) {
-                showAlert(`Failed to claim: ${error.message}`, 'error');
+                showError('registerError', 'Network error. Please try again.');
             }
         }
 
-        initMap();
+        async function login(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            await loginUser(formData.get('username'), formData.get('password'));
+        }
+
+        async function loginUser(username, password) {
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    authToken = result.token;
+                    currentUser = result.user;
+                    localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    showDashboard();
+                } else {
+                    showError('loginError', result.error || 'Login failed');
+                }
+            } catch (error) {
+                showError('loginError', 'Network error. Please try again.');
+            }
+        }
+
+        function logout() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            document.getElementById('userInfo').style.display = 'none';
+            showView('landingView');
+        }
+
+        function showDashboard() {
+            document.getElementById('userName').textContent = currentUser.username;
+            document.getElementById('userInfo').style.display = 'flex';
+            showView('dashboardView');
+            loadSuggestions();
+        }
+
+        async function loadSuggestions() {
+            document.getElementById('suggestionsLoading').style.display = 'block';
+            document.getElementById('suggestionsList').style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/suggestions`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                const suggestions = await response.json();
+
+                document.getElementById('suggestionsLoading').style.display = 'none';
+                document.getElementById('suggestionsList').style.display = 'grid';
+
+                const container = document.getElementById('suggestionsList');
+                
+                if (suggestions.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💪</div><p>No suggestions available. Update your activity preferences in your profile.</p></div>';
+                } else {
+                    container.innerHTML = suggestions.map(s => `
+                        <div class="suggestion-card">
+                            <h3 class="suggestion-title">${s.title}</h3>
+                            <div class="suggestion-meta">
+                                <span class="badge badge-${s.type}">${s.type}</span>
+                                <span>${s.duration}</span>
+                            </div>
+                            <button class="btn btn-sm btn-secondary" onclick="useSuggestion('${s.title}', '${s.type}', '${s.duration}')">Use This</button>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                document.getElementById('suggestionsLoading').innerHTML = '<p>Error loading suggestions</p>';
+            }
+        }
+
+        function useSuggestion(title, type, duration) {
+            switchTab('logWorkout');
+            document.querySelector('#logWorkoutForm input[name="title"]').value = title;
+            document.querySelector('#logWorkoutForm select[name="type"]').value = type;
+            document.querySelector('#logWorkoutForm input[name="duration"]').value = duration;
+        }
+
+        async function logWorkout(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            const data = {
+                title: formData.get('title'),
+                type: formData.get('type'),
+                duration: formData.get('duration'),
+                data: { notes: formData.get('notes') }
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/workouts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    document.getElementById('logWorkoutSuccess').textContent = 'Workout logged successfully!';
+                    document.getElementById('logWorkoutSuccess').style.display = 'block';
+                    event.target.reset();
+                    
+                    setTimeout(() => {
+                        document.getElementById('logWorkoutSuccess').style.display = 'none';
+                    }, 3000);
+                }
+            } catch (error) {
+                alert('Error logging workout');
+            }
+        }
+
+        async function loadHistory() {
+            document.getElementById('historyLoading').style.display = 'block';
+            document.getElementById('historyList').style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/workouts`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                const workouts = await response.json();
+
+                document.getElementById('historyLoading').style.display = 'none';
+                document.getElementById('historyList').style.display = 'block';
+
+                const container = document.getElementById('historyList');
+                
+                if (workouts.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><p>No workouts logged yet. Start tracking your fitness journey!</p></div>';
+                } else {
+                    container.innerHTML = '<div class="grid">' + workouts.reverse().map(w => `
+                        <div class="workout-card">
+                            <div class="workout-date">${new Date(w.timestamp).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</div>
+                            <div class="workout-title">${w.title}</div>
+                            <div class="suggestion-meta" style="margin: 0.5rem 0;">
+                                <span class="badge badge-${w.type}">${w.type}</span>
+                                <span>${w.duration}</span>
+                            </div>
+                            ${w.data && w.data.notes ? `<div class="workout-details">${w.data.notes}</div>` : ''}
+                        </div>
+                    `).join('') + '</div>';
+                }
+            } catch (error) {
+                document.getElementById('historyLoading').innerHTML = '<p>Error loading history</p>';
+            }
+        }
+
+        async function loadRecurring() {
+            document.getElementById('recurringLoading').style.display = 'block';
+            document.getElementById('recurringList').style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/recurring`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                const recurring = await response.json();
+
+                document.getElementById('recurringLoading').style.display = 'none';
+                document.getElementById('recurringList').style.display = 'grid';
+
+                const container = document.getElementById('recurringList');
+                
+                if (recurring.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔄</div><p>No recurring workouts set up yet. Create one to stay consistent!</p></div>';
+                } else {
+                    container.innerHTML = recurring.map(r => `
+                        <div class="recurring-card">
+                            <h3 class="suggestion-title">${r.title}</h3>
+                            <div class="recurring-schedule">📅 ${r.schedule}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                document.getElementById('recurringLoading').innerHTML = '<p>Error loading recurring workouts</p>';
+            }
+        }
+
+        function showCreateRecurring() {
+            document.getElementById('createRecurringForm').style.display = 'block';
+        }
+
+        function hideCreateRecurring() {
+            document.getElementById('createRecurringForm').style.display = 'none';
+        }
+
+        async function createRecurring(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            const data = {
+                title: formData.get('title'),
+                schedule: formData.get('schedule')
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/recurring`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    event.target.reset();
+                    hideCreateRecurring();
+                    loadRecurring();
+                }
+            } catch (error) {
+                alert('Error creating recurring workout');
+            }
+        }
+
+        function showError(elementId, message) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
     </script>
 </body>
 </html>
