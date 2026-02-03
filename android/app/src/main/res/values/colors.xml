@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#4F46E5</color>
+    <color name="primary_dark">#4338CA</color>
+    <color name="secondary">#10B981</color>
+    <color name="background">#F9FAFB</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="error">#EF4444</color>
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="border">#E5E7EB</color>
+    
+    <color name="badge_individual">#DBEAFE</color>
+    <color name="badge_individual_text">#1E40AF</color>
+    <color name="badge_group">#D1FAE5</color>
+    <color name="badge_group_text">#065F46</color>
+    <color name="badge_gym">#FEE2E2</color>
+    <color name="badge_gym_text">#991B1B</color>
+    <color name="badge_sports">#FEF3C7</color>
+    <color name="badge_sports_text">#92400E</color>
+    <color name="badge_free">#E0E7FF</color>
+    <color name="badge_free_text">#3730A3</color>
+</resources>

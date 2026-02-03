@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bounty Hunter</string>
+    <string name="welcome_title">Track Your Fitness Journey</string>
+    <string name="welcome_subtitle">Get personalized workout suggestions, track your progress, and stay consistent with your fitness goals.</string>
+    <string name="get_started">Get Started</string>
+    <string name="sign_in">Sign In</string>
+    <string name="create_account">Create Account</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="full_name">Full Name</string>
+    <string name="location">Location</string>
+    <string name="age">Age</string>
+    <string name="weight">Weight (lbs)</string>
+    <string name="activity_preferences">Activity Preferences</string>
+    <string name="payment_info">Payment Info</string>
+    <string name="individual">Individual</string>
+    <string name="group">Group</string>
+    <string name="gym">Gym</string>
+    <string name="sports">Sports</string>
+    <string name="free">Free</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="suggestions">Suggestions</string>
+    <string name="log_workout">Log Workout</string>
+    <string name="history">History</string>
+    <string name="recurring">Recurring</string>
+    <string name="workout_title">Workout Title</string>
+    <string name="type">Type</string>
+    <string name="duration">Duration</string>
+    <string name="notes">Notes</string>
+    <string name="save_workout">Save Workout</string>
+    <string name="create_recurring">Create Recurring Workout</string>
+    <string name="schedule">Schedule</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="biweekly">Bi-weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="no_suggestions">No suggestions available</string>
+    <string name="no_workouts">No workouts logged yet</string>
+    <string name="no_recurring">No recurring workouts set up</string>
+    <string name="use_this">Use This</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="create_new_account">Create new account?</string>
+</resources>

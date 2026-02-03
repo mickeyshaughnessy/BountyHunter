@@ -14,7 +14,9 @@ A simple platform for tracking physical fitness goals and rewards.
 
 - **Backend**: Flask API server
 - **Storage**: JSON-based storage (S3 or Local)
-- **Clients**: Web and Mobile (coming soon)
+- **Clients**: 
+  - Web (Single-page application)
+  - Android (Native Kotlin app)
 
 ## 🛠️ Setup
 
@@ -91,7 +93,9 @@ The API will be available at `http://localhost:5000`
 
 **Authentication**: Include `Authorization: Bearer <token>` header for protected endpoints.
 
-## 💻 Web Client Features
+## 💻 Web Client
+
+### Features
 
 The single-page web application includes:
 
@@ -105,3 +109,32 @@ The single-page web application includes:
   - **Recurring**: Create and manage recurring workout schedules
 - **Professional UI**: Modern design with smooth transitions and responsive layout
 - **Local Storage**: Persistent authentication across sessions
+
+## 📱 Android Client
+
+A native Android application built with Kotlin and Material Design 3.
+
+### Features
+
+- **Native Android**: Built with Kotlin for optimal performance
+- **Material Design 3**: Modern, beautiful UI components
+- **Full Feature Set**: All web features available on mobile
+- **Offline Auth**: SharedPreferences for persistent login
+- **Tabs Navigation**: ViewPager2 with 4 dashboard tabs
+- **RecyclerViews**: Efficient list rendering for workouts and suggestions
+
+### Setup
+
+1. Open the `android` folder in Android Studio
+2. Sync Gradle files
+3. Ensure backend server is running
+4. Run on emulator or device (uses `10.0.2.2:5000` for localhost)
+
+### Tech Stack
+
+- Kotlin, Material Design 3, ViewBinding
+- Retrofit2 + OkHttp3 for networking
+- Kotlin Coroutines for async operations
+- Min SDK 24, Target SDK 34
+
+See [android/README.md](android/README.md) for detailed documentation.
